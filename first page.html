@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To-Do List App</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4;
+            text-align: center;
+            margin: 50px;
+        }
+
+        #todo-list {
+            max-width: 400px;
+            margin: 0 auto;
+            text-align: left;
+        }
+
+        input[type="text"] {
+            width: 70%;
+            padding: 8px;
+            margin: 10px 0;
+        }
+
+        button {
+            padding: 8px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .task {
+            background-color: white;
+            padding: 10px;
+            margin: 5px 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .task span {
+            flex-grow: 1;
+            margin-right: 10px;
+        }
+
+        .delete-btn {
+            background-color: #f44336;
+            color: white;
+            border: none;
+            padding: 5px;
+            cursor: pointer;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body>
+    <div id="todo-list">
+        <h2>To-Do List</h2>
+        <input type="text" id="taskInput" placeholder="Enter a new task">
+        <button onclick="addTask()">Add Task</button>
+        <div id="tasks"></div>
+    </div>
+
+    <script>
+        // Function to add a new task
+        function addTask() {
+            var taskInput = document.getElementById("taskInput");
+            var taskText = taskInput.value.trim();
+
+            if (taskText !== "") {
+                // Create a task element
+                var taskElement = document.createElement("div");
+                taskElement.className = "task";
+                taskElement.innerHTML = '<span>' + taskText + '</span><button class="delete-btn" onclick="deleteTask(this)">Delete</button>';
+
+                // Append the task element to the tasks container
+                document.getElementById("tasks").appendChild(taskElement);
+
+                // Save tasks to local storage
+                saveTasksToLocalStorage();
+
+                // Clear the input field
+                taskInput.value = "";
+            }
+        }
+
+        // Function to delete a task
+        function deleteTask(buttonElement) {
+            var taskElement = buttonElement.parentElement;
+            taskElement.remove();
+
+            // Save tasks to local storage
+            saveTasksToLocalStorage();
+        }
+
+        // Function to save tasks to local storage
+        function saveTasksToLocalStorage() {
+            var tasks = [];
+            var taskElements = document.querySelectorAll(".task span");
+
+            taskElements.forEach(function(taskElement) {
+                tasks.push(taskElement.innerText);
+            });
+
+            localStorage.setItem("tasks", JSON.stringify(tasks));
+        }
+
+        // Function to load tasks from local storage
+        function loadTasksFromLocalStorage() {
+            var tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+
+            tasks.forEach(function(taskText) {
+                var taskElement = document.createElement("div");
+                taskElement.className = "task";
+                taskElement.innerHTML = '<span>' + taskText + '</span><button class="delete-btn" onclick="deleteTask(this)">Delete</button>';
+
+                document.getElementById("tasks").appendChild(taskElement);
+            });
+        }
+
+        // Load tasks from local storage on page load
+        window.onload = loadTasksFromLocalStorage;
+    </script>
+</body>
+</html>
